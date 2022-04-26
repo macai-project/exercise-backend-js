@@ -8,6 +8,6 @@ Given that deploying the lambda on AWS is a tedious process, you are given a doc
 
 ## RUN THE TESTS
 
-to run the integration tests you can just launch `docker compose up` from the project root and a few services should be initialized in order to allow you to work locally.
+to run the integration tests you can just launch `docker-compose up` from the project root and a few services should be initialized in order to allow you to work locally.
 
 If you have any questions don't hesitate to ask, this is a pairing session! And most of all, have fun! :)
