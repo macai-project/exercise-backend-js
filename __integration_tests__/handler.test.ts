@@ -16,8 +16,9 @@ const event = {
   detail: {
     product: {
       id: "123",
+      ean: "123",
       expiring_date: "2023-12-11",
-      product_expiration_type: "none",
+      product_expiration_type: "date",
       shelf_id: "shelf_123",
       shelf_name: "ABC",
       shelf_life: 12,

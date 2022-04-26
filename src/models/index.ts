@@ -1,6 +1,7 @@
 export interface Payload {
   product: {
     id: string;
+    ean: string;
     expiring_date?: string;
     product_expiration_type: "date" | "fresh" | "none";
     shelf_id: string;
