@@ -1,0 +1,80 @@
+version: "3"
+
+services:
+  localstack:
+    image: localstack/localstack:latest
+    environment:
+      - DISABLE_CORS_CHECKS=1
+      - LAMBDA_DOCKER_NETWORK=macai_network
+      - DEBUG=1
+      - DEFAULT_REGION=eu-west-1
+      - DATA_DIR=/tmp/localstack/data
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - HOST_TMP_FOLDER=${TMPDIR}
+    ports:
+      - "4566:4566"
+    volumes:
+      - ".:/root/data:z"
+      - "/var/run/docker.sock:/var/run/docker.sock:z"
+    networks:
+      - macai_network
+
+  setup-resources:
+    image: mesosphere/aws-cli
+    volumes:
+      - ./dev_env:/project/dev_env
+      - ./bin:/project/bin
+    environment:
+      - AWS_ACCESS_KEY_ID=dummyaccess
+      - AWS_SECRET_ACCESS_KEY=dummysecret
+      - AWS_DEFAULT_REGION=us-east-1
+    entrypoint: bin/entrypoint.setup.sh
+    networks:
+      - macai_network
+    depends_on:
+      - localstack
+
+  lambda:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    depends_on:
+      - setup-resources
+    environment:
+      - LOG_LEVEL=debug
+      - LOG_COLORS=true
+      - SENTRY_DSN=
+      - SENTRY_SAMPLING_RATE=1.0
+      - NODE_ENV=test
+      - AWS_EVENTBRIDGE_REGION=eu-west-1
+      - AWS_EVENTBRIDGE_EVENTBUS=default
+      - FRAMEWORK_LOGS=true
+    tty: true
+    ports:
+      - 8080:8080
+    networks:
+      - macai_network
+    volumes:
+      - ~/.aws:/root/.aws:z
+      - ~/.gitconfig:/root/.gitconfig:z
+      - ~/.ssh:/.ssh:z
+      - ./src:/var/task/src:z
+
+  test-lambda:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.test
+    depends_on:
+      - localstack
+    environment:
+      - NODE_ENV=development
+    tty: true
+    networks:
+      - macai_network
+    volumes:
+      - ./__integration_tests__:/app/__integration_tests__:z
+
+networks:
+  macai_network:
+    external: false
+    driver: bridge
