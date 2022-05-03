@@ -2,7 +2,7 @@ FROM node:14-alpine
 
 WORKDIR /app
 
-COPY package.json yarn.lock babel.config.js bin/entrypoint.test.sh /app
+COPY package.json yarn.lock babel.config.js bin/entrypoint.test.sh /app/
 
 RUN yarn install
 RUN yarn add wait-on
