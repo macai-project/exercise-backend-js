@@ -6,7 +6,7 @@ RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
 RUN yum install -y inotify-tools
 
 
-COPY package.json yarn.lock ${LAMBDA_TASK_ROOT}
+COPY package.json yarn.lock ${LAMBDA_TASK_ROOT}/
 COPY bin/entrypoint.sh /lambda-entrypoint.sh
 
 
